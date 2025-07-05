@@ -58,9 +58,9 @@ class IterationTracker:
         
         self._current_iteration += 1
         
-        # Check iteration limit
+        # Check iteration limit, allowing iterations up to and including max_iterations
         if (self._max_iterations is not None and 
-            self._current_iteration >= self._max_iterations):
+            self._current_iteration > self._max_iterations):
             self.complete()
             return False
         
