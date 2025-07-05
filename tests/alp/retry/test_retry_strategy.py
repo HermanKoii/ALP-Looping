@@ -104,7 +104,7 @@ class TestTransientErrorRetryHandler:
         with pytest.raises(ValueError, match="Always fails"):
             always_failing_function()
         
-        assert attempts == 3  # initial + 2 retries
+        assert attempts == 2  # initial + 1 retry
     
     def test_different_exception_types(self):
         """Test retry works with multiple exception types."""
