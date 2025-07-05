@@ -87,17 +87,17 @@ def test_save_and_load_configuration(tmp_path):
     assert loaded_config.hyperparameters.learning_rate == 0.03
     assert loaded_config.hyperparameters.batch_size == 128
 
-def test_configuration_error_handling(tmp_path):
+def test_configuration_error_handling(tmp_path, monkeypatch):
     """Test error handling for invalid configurations."""
     # Invalid JSON file
     invalid_config_file = tmp_path / "invalid_config.json"
     with open(invalid_config_file, 'w') as f:
         f.write("{invalid json}")
     
-    with pytest.raises(ConfigurationError):
+    with pytest.raises(ConfigurationError, match="Error reading configuration file"):
         ConfigurationManager(str(invalid_config_file))
     
     # Invalid environment variable type
-    with pytest.raises(ConfigurationError):
-        os.environ['ALP_LEARNING_RATE'] = 'not a number'
+    monkeypatch.setenv('ALP_LEARNING_RATE', 'not a number')
+    with pytest.raises(ConfigurationError, match="Invalid environment variable"):
         ConfigurationManager()
