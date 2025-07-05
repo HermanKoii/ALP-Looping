@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.py[cod]
 *.log
@@ -10,3 +11,36 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+=======
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.log
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Miscellaneous
+.DS_Store
+>>>>>>> pr-2-Merango-ALP-Looping
