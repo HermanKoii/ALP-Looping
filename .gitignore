@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,3 +12,44 @@ build/
 .coverage
 htmlcov/
 .mypy_cache/
+=======
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Configuration files
+config.json
+.env
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# OS generated files
+.DS_Store
+Thumbs.db
+>>>>>>> pr-3-Aflame7121-ALP-Looping
