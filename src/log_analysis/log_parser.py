@@ -75,20 +75,27 @@ class LogParser:
             return {}
         
         # Extract performance-related metrics
+        performance_scores = []
+        for entry in log_entries:
+            # Check for performance_score in both top-level and nested locations
+            score = entry.get('performance_score', 0)
+            if isinstance(score, (int, float)):
+                performance_scores.append(score)
+        
         performance_metrics = {
             'total_iterations': len(log_entries),
             'start_time': log_entries[0].get('timestamp'),
             'end_time': log_entries[-1].get('timestamp'),
-            'error_rate': sum(1 for entry in log_entries if entry.get('status') == 'error') / len(log_entries),
-            'performance_scores': [entry.get('performance_metrics', {}).get('performance_score', 0) for entry in log_entries]
+            'error_rate': sum(1 for entry in log_entries if entry.get('status') == 'error') / len(log_entries)
         }
         
-        # Calculate additional metrics
-        if performance_metrics['performance_scores']:
+        # Calculate performance metrics only if scores exist
+        if performance_scores:
             performance_metrics.update({
-                'avg_performance': sum(performance_metrics['performance_scores']) / len(performance_metrics['performance_scores']),
-                'max_performance': max(performance_metrics['performance_scores']),
-                'min_performance': min(performance_metrics['performance_scores'])
+                'performance_scores': performance_scores,
+                'avg_performance': sum(performance_scores) / len(performance_scores),
+                'max_performance': max(performance_scores),
+                'min_performance': min(performance_scores)
             })
         
         return performance_metrics
