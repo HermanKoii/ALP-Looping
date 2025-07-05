@@ -31,7 +31,37 @@ class ConfigurationManager:
                                          Uses default path if not provided.
         """
         self._config_path = config_path or self.DEFAULT_CONFIG_PATH
+        
+        # Validate environment variables first
+        self._validate_env_vars()
+        
+        # Then load configuration
         self._config = self._load_configuration()
+    
+    def _validate_env_vars(self):
+        """
+        Validate environment variables before configuration loading.
+        
+        Raises:
+            ConfigurationError: If any environment variable is invalid
+        """
+        # Check learning rate
+        learning_rate_var = os.environ.get('ALP_LEARNING_RATE')
+        if learning_rate_var is not None:
+            try:
+                rate = float(learning_rate_var)
+                if rate <= 0:
+                    raise ValueError("Learning rate must be positive")
+            except ValueError as e:
+                raise ConfigurationError(f"Invalid ALP_LEARNING_RATE: {e}")
+        
+        # Check learning algorithm
+        learning_algo_var = os.environ.get('ALP_LEARNING_ALGORITHM')
+        if learning_algo_var is not None:
+            try:
+                LearningAlgorithm(learning_algo_var)
+            except ValueError as e:
+                raise ConfigurationError(f"Invalid ALP_LEARNING_ALGORITHM: {e}")
     
     def _parse_env_value(self, field_name: str, value: str, default_value: Any) -> Any:
         """
