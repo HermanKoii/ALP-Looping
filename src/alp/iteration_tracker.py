@@ -58,18 +58,20 @@ class IterationTracker:
         
         self._current_iteration += 1
         
-        # Check iteration limit
+        # Check if we've reached the max iterations
         if (self._max_iterations is not None and 
             self._current_iteration > self._max_iterations):
+            # Completed, but decrement to show we're at max
+            self._current_iteration -= 1
             self.complete()
             return False
         
         self._logger.info(f"Starting iteration {self._current_iteration}")
         
-        # If we've reached the max iterations, complete
+        # If we've reached the max iterations, prepare to complete on next call
         if (self._max_iterations is not None and 
             self._current_iteration == self._max_iterations):
-            self.complete()
+            return True
         
         return True
     
