@@ -1,14 +1,7 @@
 from typing import Dict, Any, Optional
 from enum import Enum, auto
 import logging
-
-class IterationStatus(Enum):
-    """Enumeration representing possible iteration statuses."""
-    INITIALIZED = auto()
-    IN_PROGRESS = auto()
-    COMPLETED = auto()
-    TERMINATED = auto()
-    ERROR = auto()
+from src.iteration_state import IterationStatus
 
 class IterationTracker:
     """
@@ -67,16 +60,21 @@ class IterationTracker:
         
         # Check iteration limit
         if (self._max_iterations is not None and 
-            self._current_iteration >= self._max_iterations):
+            self._current_iteration > self._max_iterations):
             self.complete()
             return False
         
         self._logger.info(f"Starting iteration {self._current_iteration}")
+        
+        # If we've reached the max iterations, complete
+        if (self._max_iterations is not None and 
+            self._current_iteration == self._max_iterations):
+            self.complete()
+        
         return True
     
     def complete(self) -> None:
-        """
-        Mark the iteration process as completed."""
+        """Mark the iteration process as completed."""
         self._status = IterationStatus.COMPLETED
         self._logger.info("Iteration process completed successfully.")
     
