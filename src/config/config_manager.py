@@ -33,6 +33,43 @@ class ConfigurationManager:
         self._config_path = config_path or self.DEFAULT_CONFIG_PATH
         self._config = self._load_configuration()
     
+    def _parse_env_value(self, field_name: str, value: str, default_value: Any) -> Any:
+        """
+        Parse environment variable value with validation.
+        
+        Args:
+            field_name (str): Name of the configuration field
+            value (str): Environment variable value
+            default_value (Any): Default value for type inference
+        
+        Returns:
+            Parsed and validated value
+        
+        Raises:
+            ConfigurationError: If value cannot be parsed or validated
+        """
+        try:
+            if field_name == 'custom_parameters':
+                return json.loads(value)
+            elif field_name == 'learning_algorithm':
+                return LearningAlgorithm(value)
+            elif field_name == 'logging_level':
+                return LoggingLevel(value)
+            elif isinstance(default_value, float):
+                parsed_value = float(value)
+                if parsed_value <= 0:
+                    raise ValueError("Value must be positive")
+                return parsed_value
+            elif isinstance(default_value, int):
+                parsed_value = int(value)
+                if parsed_value <= 0:
+                    raise ValueError("Value must be positive")
+                return parsed_value
+            else:
+                return value
+        except (ValueError, json.JSONDecodeError) as e:
+            raise ConfigurationError(f"Invalid environment variable {field_name}: {e}")
+    
     def _load_configuration(self) -> AdaptiveLearningProcessConfig:
         """
         Load configuration from multiple sources with precedence.
@@ -49,7 +86,7 @@ class ConfigurationManager:
         config = AdaptiveLearningProcessConfig()
         config_dict = config.model_dump()
         
-        # Try loading from JSON file
+        # Try loading from JSON file if path exists
         if os.path.exists(self._config_path):
             try:
                 with open(self._config_path, 'r') as f:
@@ -68,27 +105,9 @@ class ConfigurationManager:
             
             if env_value is not None:
                 try:
-                    # Convert string to appropriate type
-                    if field_name == 'custom_parameters':
-                        config_dict[field_name] = json.loads(env_value)
-                    elif field_name == 'learning_algorithm':
-                        config_dict[field_name] = LearningAlgorithm(env_value)
-                    elif field_name == 'logging_level':
-                        config_dict[field_name] = LoggingLevel(env_value)
-                    elif isinstance(value, float):
-                        try:
-                            config_dict[field_name] = float(env_value)
-                        except ValueError:
-                            raise ConfigurationError(f"Invalid float value for {env_var}: {env_value}")
-                    elif isinstance(value, int):
-                        try:
-                            config_dict[field_name] = int(env_value)
-                        except ValueError:
-                            raise ConfigurationError(f"Invalid integer value for {env_var}: {env_value}")
-                    else:
-                        config_dict[field_name] = env_value
-                except (ValueError, json.JSONDecodeError) as e:
-                    raise ConfigurationError(f"Invalid environment variable {env_var}: {e}")
+                    config_dict[field_name] = self._parse_env_value(field_name, env_value, value)
+                except ConfigurationError:
+                    raise
         
         return validate_alp_config(config_dict)
     
