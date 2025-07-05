@@ -1,5 +1,6 @@
 import pytest
-from src.alp.iteration_tracker import IterationTracker, IterationStatus
+from src.alp.iteration_tracker import IterationTracker
+from src.iteration_state import IterationStatus
 
 def test_iteration_tracker_initialization():
     """Test basic initialization of IterationTracker."""

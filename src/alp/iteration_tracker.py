@@ -1,14 +1,7 @@
 from typing import Dict, Any, Optional
 from enum import Enum, auto
 import logging
-
-class IterationStatus(Enum):
-    """Enumeration representing possible iteration statuses."""
-    INITIALIZED = auto()
-    IN_PROGRESS = auto()
-    COMPLETED = auto()
-    TERMINATED = auto()
-    ERROR = auto()
+from src.iteration_state import IterationStatus  # Import unified enum
 
 class IterationTracker:
     """
@@ -75,8 +68,7 @@ class IterationTracker:
         return True
     
     def complete(self) -> None:
-        """
-        Mark the iteration process as completed."""
+        """Mark the iteration process as completed."""
         self._status = IterationStatus.COMPLETED
         self._logger.info("Iteration process completed successfully.")
     

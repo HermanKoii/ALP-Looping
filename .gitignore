@@ -1,14 +1,27 @@
 __pycache__/
+<<<<<<< HEAD
 *.pyc
 *.pyo
 *.pyd
+=======
+*.py[cod]
+*$py.class
+>>>>>>> pr-3-Santix1234-ALP-Looping
 .pytest_cache/
 .coverage
 htmlcov/
 .env
+<<<<<<< HEAD
+=======
+*.log
+>>>>>>> pr-3-Santix1234-ALP-Looping
 dist/
 build/
 *.egg-info/
 .vscode/
+<<<<<<< HEAD
 .idea/
 *.log
+=======
+.idea/
+>>>>>>> pr-3-Santix1234-ALP-Looping
