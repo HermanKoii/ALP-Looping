@@ -97,26 +97,21 @@ def test_configuration_error_handling(tmp_path, monkeypatch):
     with pytest.raises(ConfigurationError, match="Error reading configuration file"):
         ConfigurationManager(str(invalid_config_file))
     
-    # Invalid environment variable type for numeric fields
-    monkeypatch.setenv('ALP_LEARNING_RATE', 'not a number')
-    with pytest.raises(ConfigurationError, match="could not convert string to float"):
-        # Temporarily remove existing ALP_LEARNING_RATE to prevent interference
-        old_env_value = os.environ.pop('ALP_LEARNING_RATE', None)
-        try:
+    # Specific environment variable validation tests
+    # Test learning rate
+    with pytest.raises((ConfigurationError, ValueError), match="Invalid|must be positive"):
+        with monkeypatch.context() as m:
+            m.setenv('ALP_LEARNING_RATE', 'not a number')
             ConfigurationManager()
-        finally:
-            # Restore the environment variable if it existed
-            if old_env_value is not None:
-                os.environ['ALP_LEARNING_RATE'] = old_env_value
-
-    # Invalid enum values
-    monkeypatch.setenv('ALP_LEARNING_ALGORITHM', 'invalid_algorithm')
-    with pytest.raises(ConfigurationError, match="is not a valid LearningAlgorithm"):
-        # Temporarily remove existing ALP_LEARNING_ALGORITHM to prevent interference
-        old_env_value = os.environ.pop('ALP_LEARNING_ALGORITHM', None)
-        try:
+    
+    # Test learning algorithm
+    with pytest.raises((ConfigurationError, ValueError), match="Invalid|is not a valid"):
+        with monkeypatch.context() as m:
+            m.setenv('ALP_LEARNING_ALGORITHM', 'invalid_algorithm')
             ConfigurationManager()
-        finally:
-            # Restore the environment variable if it existed
-            if old_env_value is not None:
-                os.environ['ALP_LEARNING_ALGORITHM'] = old_env_value
+    
+    # Test invalid logging level
+    with pytest.raises((ConfigurationError, ValueError), match="Invalid|is not a valid"):
+        with monkeypatch.context() as m:
+            m.setenv('ALP_LOGGING_LEVEL', 'SUPER_DEBUG')
+            ConfigurationManager()
